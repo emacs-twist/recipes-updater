@@ -23,14 +23,15 @@
             echo "Usage: default <upstream ref>" >&2
           }
 
+          if [[ $# -eq 0 ]]; then
+            usage
+            exit 1
+          fi
+
           case "$1" in
             -h|--help)
               usage
               exit
-               ;;
-            \'\')
-              usage
-              exit 1
                ;;
             *)
               upstream="$1" ;;
