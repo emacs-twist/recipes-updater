@@ -25,7 +25,10 @@
       pkgs = nixpkgs.legacyPackages.${system};
     in {
       default = lib.makeOverridable (
-        {commitCallback ? defaultCommitCallback}:
+        {
+          commitCallback ? defaultCommitCallback,
+          force ? false,
+        }:
           pkgs.writeShellApplication {
             name = "default";
             runtimeInputs = [
@@ -66,7 +69,7 @@
               git filter-repo --path recipes/ --refs "$base..HEAD" ${
                 lib.optionalString (commitCallback != null)
                 ("--commit-callback '\n" + commitCallback + "'")
-              }
+              } ${lib.optionalString force "--force"}
               git rebase "$start"
               git switch "$branch"
               git merge --ff-only "$tmp"
