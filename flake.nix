@@ -23,7 +23,7 @@
   in {
     packages = eachSystem (system: let
       pkgs = nixpkgs.legacyPackages.${system};
-    in {
+    in rec {
       default = lib.makeOverridable (
         {
           commitCallback ? defaultCommitCallback,
@@ -34,6 +34,7 @@
             runtimeInputs = [
               pkgs.git-filter-repo
             ];
+            meta.mainProgram = "default";
             text = ''
               usage() {
                 echo "Usage: default <upstream ref>" >&2
@@ -76,6 +77,10 @@
             '';
           }
       ) {};
+
+      forceUpdate = default.override {
+        force = true;
+      };
     });
   };
 }
