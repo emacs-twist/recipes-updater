@@ -55,25 +55,15 @@
               esac
 
               start="$(git rev-parse HEAD)"
-              branch="$(git symbolic-ref --short HEAD)"
               tmp="recipes-$(date +%s)"
               base=$(git merge-base "$upstream" "$start")
 
               git switch -c "$tmp" "$upstream"
 
-              cleanup() {
-                git branch -D "$tmp"
-              }
-
-              trap cleanup ERR EXIT
-
               git filter-repo --path recipes/ --refs "$base..HEAD" ${
                 lib.optionalString (commitCallback != null)
                 ("--commit-callback '\n" + commitCallback + "'")
               } ${lib.optionalString force "--force"}
-              git rebase "$start"
-              git switch "$branch"
-              git merge --ff-only "$tmp"
             '';
           }
       ) {};
